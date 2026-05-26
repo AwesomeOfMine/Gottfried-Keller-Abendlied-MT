@@ -2970,35 +2970,37 @@
 <div id="scores"></div>
 
 <script>
-const POCKETBASE_URL = "http://192.168.2.81:8090";
-const COLLECTION = "leaderboard";
+(function () {
+  const POCKETBASE_URL = "http://192.168.2.81:8090";
+  const COLLECTION = "leaderboard";
 
-async function loadScores() {
-  try {
-    const res = await fetch(`${POCKETBASE_URL}/api/collections/${COLLECTION}/records`);
-    const data = await res.json();
+  async function loadScores() {
+    try {
+      const res = await fetch(`${POCKETBASE_URL}/api/collections/${COLLECTION}/records`);
+      const data = await res.json();
 
-    const box = document.getElementById("scores");
+      const box = document.getElementById("scores");
 
-    if (!box) {
-      console.log("scores-div nicht gefunden");
-      return;
+      if (!box) {
+        console.log("scores-div nicht gefunden");
+        return;
+      }
+
+      if (!data.items || data.items.length === 0) {
+        box.innerHTML = "<p>Noch keine Einträge vorhanden.</p>";
+        return;
+      }
+
+      box.innerHTML = data.items.map(item =>
+        `<p>${item.name} - ${item.score} Punkte</p>`
+      ).join("");
+    } catch (error) {
+      console.error("Fehler beim Laden:", error);
     }
-
-    if (!data.items || data.items.length === 0) {
-      box.innerHTML = "<p>Noch keine Einträge vorhanden.</p>";
-      return;
-    }
-
-    box.innerHTML = data.items.map(item =>
-      `<p>${item.name} - ${item.score} Punkte</p>`
-    ).join("");
-  } catch (error) {
-    console.error("Fehler beim Laden:", error);
   }
-}
 
-loadScores();
+  loadScores();
+})();
 </script>
 </body>
 </html>
